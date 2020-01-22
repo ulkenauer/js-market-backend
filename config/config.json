@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "sadi",
+    "password": "sadi",
+    "database": "sadi",
+    "host": "0.0.0.0",
+    "port": "5433",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "sadi",
+    "password": "sadi",
+    "database": "sadi",
+    "host": "0.0.0.0",
+    "port": "5433",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "sadi",
+    "password": "sadi",
+    "database": "sadi",
+    "host": "0.0.0.0",
+    "port": "5433",
+    "dialect": "postgres"
+  }
+}

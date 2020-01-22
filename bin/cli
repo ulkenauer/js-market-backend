@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+//var app = require('../app');
+//var debug = require('debug')('js-market-backend:server');
+
+let args = process.argv.slice(2);
+
+if (args.length === 0) {
+    console.log('no command name specified');
+    return;
+}
+
+let commandName = args[0];
+let commandArgs = process.argv.slice(3);
+
+let command = require(`../commands/${commandName}`);
+command(commandArgs);
+//command(app, commandArgs);
