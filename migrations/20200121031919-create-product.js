@@ -22,6 +22,10 @@ module.exports = {
       },
       measureUnits: {
         allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      measureUnitsType: {
+        allowNull: false,
         defaultValue: 1,
         type: Sequelize.INTEGER
       },

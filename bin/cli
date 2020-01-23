@@ -14,5 +14,15 @@ let commandName = args[0];
 let commandArgs = process.argv.slice(3);
 
 let command = require(`../commands/${commandName}`);
-command(commandArgs);
+async function call()
+{
+    try {
+        await command(commandArgs);
+    } catch (err) {
+        console.log(err)
+        console.log(err.stack)
+    }
+}
+
+call()
 //command(app, commandArgs);

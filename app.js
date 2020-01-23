@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const bodyParser = require('body-parser')
 
 //var indexRouter = require('./routes/index');
 //var usersRouter = require('./routes/users');
@@ -14,6 +15,7 @@ var compression = require('compression');
 var app = express();
 
 app.use(compression()); //Compress all routes
+app.use(bodyParser.json())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,6 +42,7 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
+  console.log(err.stack)
   res.send({ error: err })
   /* // set locals, only providing error in development
   res.locals.message = err.message;

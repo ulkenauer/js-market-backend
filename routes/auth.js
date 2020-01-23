@@ -1,14 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
+const AsyncHandler = require('./AsyncHandler')
 const UserService = require('../services/UserService');
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const config = require('../config/config.json');
 var sequelize = new Sequelize(config[process.env.NODE_ENV]);
 const User = require('../models/user')(sequelize, DataTypes);
+const Basket = require('../models/basket')(sequelize, DataTypes);
+
+User.associate({Basket})
 
 /* GET home page. */
-router.get('/register', async function (req, res, next) {
+router.get('/register', AsyncHandler(async function (req, res, next) {
 
     let query = req.query;
 
@@ -28,7 +32,9 @@ router.get('/register', async function (req, res, next) {
     user.phone = req.query.phone;
 
     try {
-        await user.save();
+        await user.save()
+        await user.initBasket()
+        await user.save()
     } catch (err) {
         res.send({ 'status': 'error', 'message': err });
         return;
@@ -37,7 +43,7 @@ router.get('/register', async function (req, res, next) {
     let token = UserService.generateToken(user);
 
     res.send({'status': 'ok', 'token': token});
-});
+}));
 
 router.get('/login', async function (req, res, next) {
 

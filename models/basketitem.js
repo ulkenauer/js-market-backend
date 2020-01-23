@@ -6,8 +6,10 @@ module.exports = (sequelize, DataTypes) => {
     amount: DataTypes.INTEGER,
     fixedTotal: DataTypes.DOUBLE
   }, {});
+
   BasketItem.associate = function(models) {
-    // associations can be defined here
+    BasketItem.belongsTo(models.Basket, { foreignKey: 'basketId' })
+    BasketItem.belongsTo(models.Product, { foreignKey: 'productId' })
   };
   return BasketItem;
 };

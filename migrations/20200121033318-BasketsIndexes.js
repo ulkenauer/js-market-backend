@@ -17,7 +17,7 @@ module.exports = {
 
       await queryInterface.addConstraint('Baskets', ['userId'], {
         type: 'foreign key',
-        name: 'products_userId_users_id',
+        name: 'baskets_userId_users_id',
         references: {
           table: 'Users',
           field: 'id'
@@ -37,7 +37,7 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.removeIndex('Baskets', 'basket_userId', { transaction });
-      await queryInterface.removeConstraint('Baskets', 'products_userId_users_id', { transaction });
+      await queryInterface.removeConstraint('Baskets', 'baskets_userId_users_id', { transaction });
       await transaction.commit();
     } catch (err) {
       await transaction.rollback();
