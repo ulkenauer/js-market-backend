@@ -24,18 +24,45 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Basket, { foreignKey: 'userId' })
     User.hasOne(models.Basket, {
       foreignKey: 'userId', scope: {
-        status: models.Basket.statuses.ACTIVE
+        frozenAt: null
     }, as: 'activeBasket' })
     // associations can be defined here
   };
 
+  User.prototype.getCurrentBasket = async function ()
+  {
+    let currentBasket = this.associations.Basket.findOne({
+      order: [
+      ['id', 'DESC']
+      ]
+    })
+    
+    return currentBasket
+  }
+
   User.prototype.initBasket = async function ()
   {
-    let basket = this.associations.Basket.build()
-    if (await this.getActiveBasket() === null) {
-      basket.userId = this.id
+    let currentBasket = await this.getCurrentBasket()
+    let self = this
+
+    let initialize = async function () {
+      let basket = self.associations.Basket.build()
+      basket.userId = self.id
       await basket.save()
-      //await this.setBasket(basket)
+    }
+
+    if (currentBasket === null) {
+      await initialize()
+    } else if(currentBasket.frozen) {
+      let now = new Date
+      let frozenDate = new Date(currentBasket.frozenAt)
+      //date.setUTCHours(0, 0, 0)
+      frozenDate.setHours(0, 0, 0)
+      frozenDate.setDate(frozenDate.getDate() + 1)
+
+      if (now > frozenDate) {
+        await initialize()
+      }
     }
   }
 

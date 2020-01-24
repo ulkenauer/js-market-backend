@@ -41,16 +41,23 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  res.status(err.status || 500);
-  console.log(err.stack)
-  res.send({ error: err })
-  /* // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  //res.status(err.status || 500);
+  
+  if ('status' in err === false) {
+    err.status = 500
+  }
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error'); */
+  if (err.status === 500) {
+    console.log(err.stack)
+  }
+
+  res.status(err.status)
+
+  if (req.app.get('env') === 'development') {
+    res.send({ status: 'error', error: err })
+  } else {
+    res.send({ status: 'error', error: { message: err.message } })
+  }
 });
 
 module.exports = app;

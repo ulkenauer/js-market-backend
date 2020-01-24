@@ -86,7 +86,13 @@ router.use(UserMiddleware)
 //private api methods
 
 router.get('/basket', AsyncHandler(async function (req, res, next) {
-    let basket = await user.getActiveBasket()
+    let basket = await user.getCurrentBasket()
+
+    if (basket === null) {
+        basket = Basket.build()
+        //throw {status: 400, message: 'no baskets'}
+    }
+
     let details = await basket.getDetailed()
     res.send(details)
 }));
@@ -109,19 +115,33 @@ router.post('/basket/set-good', AsyncHandler(async function (req, res, next) {
 
     await user.initBasket()
     let basket = await user.getActiveBasket()
+    
+    if (basket === null) {
+        throw {status: 400, message: 'no active baskets'}
+    }
+
     await basket.setGood({productId: query.product_id, amount: query.amount})
     res.send({status: 'ok'})
 }));
 
 router.post('/basket/clear', AsyncHandler(async function (req, res, next) {
     let basket = await user.getActiveBasket()
+    if (basket === null) {
+        throw {status: 400, message: 'no basket to clear'}
+    }
     await basket.clear()
     res.send({status: 'ok'})
 }));
 
 router.post('/basket/freeze', AsyncHandler(async function (req, res, next) {
     let basket = await user.getActiveBasket()
+
+    if (basket === null) {
+        throw {status: 400, message: 'no basket to freeze'}
+    }
+
     await basket.freeze()
+    await basket.save()
     res.send({status: 'ok'})
 }));
 

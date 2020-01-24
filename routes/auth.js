@@ -31,14 +31,9 @@ router.get('/register', AsyncHandler(async function (req, res, next) {
     user.password = req.query.password;
     user.phone = req.query.phone;
 
-    try {
-        await user.save()
-        await user.initBasket()
-        await user.save()
-    } catch (err) {
-        res.send({ 'status': 'error', 'message': err });
-        return;
-    }
+    await user.save()
+    await user.initBasket()
+    await user.save()
 
     let token = UserService.generateToken(user);
 

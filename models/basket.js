@@ -2,24 +2,14 @@
 module.exports = (sequelize, DataTypes) => {
   const Basket = sequelize.define('Basket', {
     userId: DataTypes.INTEGER,
-    status: DataTypes.INTEGER,
-/*     statuses: {
+    frozenAt: DataTypes.DATE,
+    frozen: {
+      type: DataTypes.VIRTUAL,
       get() {
-        return {
-          'FROZEN': 0,
-          'ACTIVE': 1
-        };
+        return this.frozenAt !== null
       }
-    } */
-  }, {});
-  Object.defineProperty(Basket, 'statuses', {
-    get: function () {
-      return {
-        'FROZEN': 0,
-        'ACTIVE': 1
-      };
     }
-  });
+  }, {});
 
   Basket.prototype.removeGood = async function (productId) {
     await this.associations.BasketItem.destroy({
@@ -60,7 +50,18 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Basket.prototype.freeze = async function () {
+    this.frozenAt = new Date
+    let basketItems = await this.getBasketItems()
+    let promises = basketItems.map(basketItem => {
+      return async function () {
+        let product = await basketItem.getProduct()
+        let total = product.price * basketItem.amount
+        basketItem.fixedTotal = total
+        await basketItem.save()
+      }()
+    })
 
+    await Promise.all(promises)
   }
 
   Basket.prototype.clear = async function () {
@@ -73,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
   }
 
   Basket.prototype.getDetailed = async function () {
+    let self = this
     let basketItems = await this.getBasketItems()
     let total = await this.getTotal()
     let products = []
@@ -80,8 +82,15 @@ module.exports = (sequelize, DataTypes) => {
     let promises = basketItems.map(basketItem => {
       return async function() {
         let product = await basketItem.getProduct()
+
+        let price = product.price
+        if (self.frozen) {
+          price = basketItem.fixedTotal / basketItem.amount
+        }
+
         products.push({
-          price: product.price,
+          id: product.id,
+          price: price,
           name: product.name,
           amount: basketItem.amount
         }) 
@@ -90,13 +99,13 @@ module.exports = (sequelize, DataTypes) => {
 
     await Promise.all(promises)    
 
-    return { total, products }
+    return { total, products, frozen: this.frozen }
   }
 
   Basket.prototype.getTotal = async function () {
     let basketItems = await this.getBasketItems()
     let total = 0
-    if (this.status === Basket.statuses.FROZEN) {
+    if (this.frozen) {
       basketItems.forEach(basketItem => {
         total += basketItem.fixedTotal
       })
