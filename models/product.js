@@ -1,8 +1,19 @@
 'use strict';
+
+const defaultImageUrl = 'https://i.imgur.com/swJvche.jpg'
+
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
     name: DataTypes.STRING,
-    imageUrl: DataTypes.STRING,
+    imageUrl: {
+      type: DataTypes.STRING, get() {
+        let imageUrl = this.getDataValue('imageUrl')
+        if (imageUrl === null) {
+          imageUrl = defaultImageUrl
+        }
+        return imageUrl
+      }
+    },
     price: DataTypes.DOUBLE,
     measureUnits: DataTypes.INTEGER,
     measureUnitsType: DataTypes.INTEGER,

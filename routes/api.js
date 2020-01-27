@@ -4,7 +4,7 @@ var router = express.Router();
 const AsyncHandler = require('./AsyncHandler')
 const UserService = require('../services/UserService');
 const { Op, Sequelize, Model, DataTypes } = require("sequelize");
-const config = require('../config/config.json');
+const config = require('../config/db.json');
 var sequelize = new Sequelize(config[process.env.NODE_ENV]);
 const User = require('../models/user')(sequelize, DataTypes);
 const Product = require('../models/product')(sequelize, DataTypes);
@@ -14,11 +14,6 @@ const BasketItem = require('../models/basketitem')(sequelize, DataTypes);
 User.associate({ Basket })
 Basket.associate({ User, BasketItem })
 BasketItem.associate({ Basket, Product })
-/* 
-
-Basket.associate({ User, BasketItem })
-
-User.associate({ Basket }) */
 
 let user = null;
 let UserMiddleware = AsyncHandler( async (req, res, next)  => {

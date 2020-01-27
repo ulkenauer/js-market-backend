@@ -6,13 +6,6 @@ var privateKEY  = fs.readFileSync(__dirname + '/../keys/private.pem', 'utf8');
 var publicKEY  = fs.readFileSync(__dirname + '/../keys/public.pem', 'utf8');  
 module.exports = {
  sign: (payload, $Options) => {
-  /*
-   sOptions = {
-    issuer: "Authorizaxtion/Resource/This server",
-    subject: "iam@user.me", 
-    audience: "Client_Identity" // this should be provided by client
-   }
-  */
   // Token signing options
   var signOptions = {
       issuer:  $Options.issuer,
@@ -24,13 +17,6 @@ module.exports = {
   return jwt.sign(payload, privateKEY, signOptions);
 },
 verify: (token, $Option) => {
-  /*
-   vOption = {
-    issuer: "Authorization/Resource/This server",
-    subject: "iam@user.me", 
-    audience: "Client_Identity" // this should be provided by client
-   }  
-  */
   var verifyOptions = {
       issuer:  $Option.issuer,
       subject:  $Option.subject,
@@ -46,6 +32,5 @@ verify: (token, $Option) => {
 },
  decode: (token) => {
     return jwt.decode(token, {complete: true});
-    //returns null if token is invalid
  }
 }

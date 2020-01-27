@@ -4,14 +4,13 @@ var router = express.Router();
 const AsyncHandler = require('./AsyncHandler')
 const UserService = require('../services/UserService');
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const config = require('../config/config.json');
+const config = require('../config/db.json');
 var sequelize = new Sequelize(config[process.env.NODE_ENV]);
 const User = require('../models/user')(sequelize, DataTypes);
 const Basket = require('../models/basket')(sequelize, DataTypes);
 
 User.associate({Basket})
 
-/* GET home page. */
 // TODO: change to POST
 router.get('/register', AsyncHandler(async function (req, res, next) {
 

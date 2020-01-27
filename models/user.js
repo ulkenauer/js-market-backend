@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
   User.prototype.getCurrentBasket = async function ()
   {
     let currentBasket = this.associations.Basket.findOne({
+      where: {userId: this.id},
       order: [
       ['id', 'DESC']
       ]
@@ -56,7 +57,6 @@ module.exports = (sequelize, DataTypes) => {
     } else if(currentBasket.frozen) {
       let now = new Date
       let frozenDate = new Date(currentBasket.frozenAt)
-      //date.setUTCHours(0, 0, 0)
       frozenDate.setHours(0, 0, 0)
       frozenDate.setDate(frozenDate.getDate() + 1)
 

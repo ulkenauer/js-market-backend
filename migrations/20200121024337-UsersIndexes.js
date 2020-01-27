@@ -6,8 +6,7 @@ module.exports = {
     try {
       await queryInterface.addIndex(
         'Users',
-        //'phone',
-        ['phone'],//[],//null,//'',
+        ['phone'],
         {
           fields: 'phone',
           name: 'user_phone',
@@ -26,7 +25,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      //await queryInterface.removeColumn('Person', 'petName', { transaction });
       await queryInterface.removeIndex('Users', 'user_phone', { transaction });
       await transaction.commit();
     } catch (err) {

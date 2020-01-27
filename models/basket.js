@@ -18,20 +18,9 @@ module.exports = (sequelize, DataTypes) => {
         productId: productId
       }
     })
-
-    //also works
-    /* let basketItem = await this.associations.BasketItem.findOne({
-      where: {
-        basketId: this.id,
-        productId: productId
-      }
-    })
-
-    await basketItem.destroy() */
   }
 
   Basket.prototype.setGood = async function (data) {
-    //basket.addBasketItems([basketItem])
     let basketItem = await this.associations.BasketItem.findOne({
       where: {
         basketId: this.id,

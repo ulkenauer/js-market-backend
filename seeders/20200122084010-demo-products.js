@@ -1,6 +1,6 @@
 'use strict';
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const config = require('../config/config.json');
+const config = require('../config/db.json');
 var sequelize = new Sequelize(config["development"]);
 const Product = require('../models/product')(sequelize, DataTypes);
 
@@ -11,35 +11,35 @@ module.exports = {
       measureUnitsType: Product.measureUnitsTypes['l'],
       measureUnits: 2,
       price: 100,
-      imageUrl: '/images/water.jpg'
+      imageUrl: 'https://i.imgur.com/9pv8jdU.jpg'
     },
     {
       name: 'Вода не питьевая',
       measureUnitsType: Product.measureUnitsTypes['l'],
       measureUnits: 2,
       price: 200,
-      imageUrl: '/images/water.jpg'
+      imageUrl: 'https://i.imgur.com/9pv8jdU.jpg'
     },
     {
       name: 'Вода питьевая',
       measureUnitsType: Product.measureUnitsTypes['ml'],
       measureUnits: 1,
       price: 400,
-      imageUrl: '/images/water.jpg'
+      imageUrl: 'https://i.imgur.com/9pv8jdU.jpg'
     },
     {
       name: 'Автошина',
       measureUnitsType: Product.measureUnitsTypes['pt'],
       measureUnits: 1,
       price: 375.8,
-      imageUrl: '/images/tire.png'
+      imageUrl: 'https://i.imgur.com/ZPGCxr9.png'
     },
     {
       name: 'Автошина, но две',
       measureUnitsType: Product.measureUnitsTypes['pt'],
       measureUnits: 3,
       price: 675.28,
-      imageUrl: '/images/tire.png'
+      imageUrl: 'https://i.imgur.com/ZPGCxr9.png'
     }
     ];
     
