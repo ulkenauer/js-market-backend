@@ -1,0 +1,12 @@
+version: "2"
+services:
+   postgres:
+     build: ./postgres
+     volumes:
+       - ./postgres-data:/var/lib/postgresql/data
+     environment:
+       POSTGRES_PASSWORD: sadi
+       POSTGRES_DB: sadi
+       POSTGRES_USER: sadi
+     ports:
+       - "5433:5432"

@@ -8,6 +8,11 @@ openssl genrsa -out private.pem 512
 openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 ```
 
+## Bootstrap DB
+``` bash
+cd docker && docker-compose up -d --build
+```
+
 ## Config
 
 ``` bash
@@ -21,8 +26,8 @@ nano config/cors.json
 ## Dependencies and migrations:
 ``` bash
     npm install # install dependecies
-    npx sequelize-cli db:migrate # run migrations
-    npx sequelize:seed:all # populate db with test records (insert products)
+    npx sequelize-cli db:migrate --config=config/db.json # run migrations
+    npx sequelize db:seed:all --config=config/db.json # populate db with test records (insert products)
     npm start # run in development mode
     npm run prod # run in production mode
     npm run cli # run cli command
