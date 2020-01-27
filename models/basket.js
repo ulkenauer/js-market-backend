@@ -41,6 +41,14 @@ module.exports = (sequelize, DataTypes) => {
     
     if (basketItem === null) {
       basketItem = this.associations.BasketItem.build()
+      if (data.amount <= 0) {
+        return
+      }
+    } else {
+      if (data.amount <= 0) {
+        await basketItem.destroy()
+        return
+      }
     }
 
     basketItem.productId = data.productId
@@ -91,6 +99,7 @@ module.exports = (sequelize, DataTypes) => {
         products.push({
           id: product.id,
           price: price,
+          imageUrl: product.imageUrl,
           name: product.name,
           amount: basketItem.amount
         }) 

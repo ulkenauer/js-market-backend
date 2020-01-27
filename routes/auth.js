@@ -12,6 +12,7 @@ const Basket = require('../models/basket')(sequelize, DataTypes);
 User.associate({Basket})
 
 /* GET home page. */
+// TODO: change to POST
 router.get('/register', AsyncHandler(async function (req, res, next) {
 
     let query = req.query;
@@ -21,12 +22,25 @@ router.get('/register', AsyncHandler(async function (req, res, next) {
         return;
     }
 
+    if (!query.phone.match(/89[0-9]{9}$/)) {
+        res.send({'status': 'error', 'message': 'phone is invalid'});
+        return;
+    }
+
+    let user = await User.findOne({where: {phone: query.phone}})
+
+    if (user !== null) {
+        res.send({'status': 'error', 'message': 'user already exists', user: user});
+        return;
+    }
+    
     if (query.password.length < 5) {
         res.send({'status': 'error', 'message': 'password should be at least 5 characters long'});
         return;
     }
 
-    let user = User.build();
+
+    user = User.build();
 
     user.password = req.query.password;
     user.phone = req.query.phone;

@@ -3,7 +3,7 @@ var router = express.Router();
 
 const AsyncHandler = require('./AsyncHandler')
 const UserService = require('../services/UserService');
-const { Sequelize, Model, DataTypes } = require("sequelize");
+const { Op, Sequelize, Model, DataTypes } = require("sequelize");
 const config = require('../config/config.json');
 var sequelize = new Sequelize(config[process.env.NODE_ENV]);
 const User = require('../models/user')(sequelize, DataTypes);
@@ -57,8 +57,20 @@ router.get('/products/list', AsyncHandler(async function (req, res, next) {
     }
 
     let pageSize = 20;
-    let products = await Product.findAll({ offset: (page-1) * pageSize, limit: pageSize });
-    
+
+    let products = []
+
+    if ('search' in query) {
+        products = await Product.findAll({
+            where: {
+                name: {
+                [Op.like]: `%${query.search}%`
+            }
+        }, offset: (page-1) * pageSize, limit: pageSize });
+    } else {
+        products = await Product.findAll({ offset: (page-1) * pageSize, limit: pageSize });
+    }
+
     res.send(products);
 }));
 
@@ -84,6 +96,10 @@ router.use(UserMiddleware)
 
 
 //private api methods
+
+router.get('/identity', function (req, res, next) {
+    res.send(user)
+});
 
 router.get('/basket', AsyncHandler(async function (req, res, next) {
     let basket = await user.getCurrentBasket()
@@ -120,8 +136,11 @@ router.post('/basket/set-good', AsyncHandler(async function (req, res, next) {
         throw {status: 400, message: 'no active baskets'}
     }
 
-    await basket.setGood({productId: query.product_id, amount: query.amount})
-    res.send({status: 'ok'})
+    await basket.setGood({ productId: query.product_id, amount: query.amount })
+    
+    let details = await basket.getDetailed()
+    res.send(details)
+    //res.send({status: 'ok'})
 }));
 
 router.post('/basket/clear', AsyncHandler(async function (req, res, next) {
@@ -130,7 +149,10 @@ router.post('/basket/clear', AsyncHandler(async function (req, res, next) {
         throw {status: 400, message: 'no basket to clear'}
     }
     await basket.clear()
-    res.send({status: 'ok'})
+
+    let details = await basket.getDetailed()
+    res.send(details)
+    //res.send({status: 'ok'})
 }));
 
 router.post('/basket/freeze', AsyncHandler(async function (req, res, next) {
@@ -142,7 +164,10 @@ router.post('/basket/freeze', AsyncHandler(async function (req, res, next) {
 
     await basket.freeze()
     await basket.save()
-    res.send({status: 'ok'})
+
+    let details = await basket.getDetailed()
+    res.send(details)
+    //res.send({status: 'ok'})
 }));
 
 

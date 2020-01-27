@@ -6,6 +6,32 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.DOUBLE,
     measureUnits: DataTypes.INTEGER,
     measureUnitsType: DataTypes.INTEGER,
+    measureUnitsText: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const typesMap = {
+          1: 'кг',
+          2: 'гр',
+          3: 'л',
+          4: 'мл',
+          5: 'шт',
+        }
+        return typesMap[this.measureUnitsType]
+      }
+    },
+    measureUnitsHint: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const typesMap = {
+          1: 'вес',
+          2: 'вес',
+          3: 'объем',
+          4: 'объем',
+          5: 'количество',
+        }
+        return typesMap[this.measureUnitsType]
+      }
+    }
   }, {});
   Object.defineProperty(Product, 'measureUnitsTypes', {
     get: function () {
